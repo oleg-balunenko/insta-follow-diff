@@ -59,7 +59,6 @@ func TestLoad(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := Load(context.Background(), tt.args.path)
 			if tt.wantErr {
@@ -67,6 +66,7 @@ func TestLoad(t *testing.T) {
 
 				return
 			}
+
 			assert.NoError(t, err)
 			assert.Equal(t, tt.want, got)
 		})

@@ -5,6 +5,8 @@ linters:
     - gofmt
     - revive
     - goimports
+    - unused
+    - gosimple
 
 linters-settings:
   errcheck:
@@ -97,16 +99,16 @@ issues:
 run:
   issues-exit-code: 1
   tests: true
-  skip-dirs:
+  exclude-dirs:
     - vendor/
-  skip-files:
+  exclude-files:
     - \.pb\.go$
 
 # output configuration options
 output:
   # colored-line-number|line-number|json|tab|checkstyle|code-climate|junit-xml|github-actions
   # default is "colored-line-number"
-  format: github-actions
+  formats: github-actions
 
   # print lines of code with issue, default is true
   print-issued-lines: true
@@ -122,3 +124,5 @@ output:
 
   # sorts results by: filepath, line and column
   sort-results: true
+
+

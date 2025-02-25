@@ -21,21 +21,21 @@ import (
 	"github.com/obalunenko/instadiff-cli/internal/utils"
 )
 
-func notFound(ctx context.Context) cli.CommandNotFoundFunc {
+func notFound() cli.CommandNotFoundFunc {
 	return func(c *cli.Context, command string) {
 		if _, err := fmt.Fprintf(
 			c.App.Writer,
 			"Command [%s] not supported.\nTry --help flag to see how to use it\n",
 			command,
 		); err != nil {
-			log.WithError(ctx, err).Fatal("Failed to print not found message")
+			log.WithError(c.Context, err).Fatal("Failed to print not found message")
 		}
 	}
 }
 
-func onExit(ctx context.Context) cli.AfterFunc {
+func onExit() cli.AfterFunc {
 	return func(c *cli.Context) error {
-		log.Info(ctx, "Exit...")
+		log.Info(c.Context, "Exit...")
 
 		return nil
 	}
@@ -43,9 +43,9 @@ func onExit(ctx context.Context) cli.AfterFunc {
 
 type cmdFunc func(c *cli.Context, svc *service.Service) error
 
-func executeCmd(ctx context.Context, f cmdFunc) cli.ActionFunc {
+func executeCmd(f cmdFunc) cli.ActionFunc {
 	return func(c *cli.Context) error {
-		ctx = log.ContextWithLogger(c.Context, log.FromContext(c.Context).WithField("cmd", c.Command.Name))
+		ctx := log.ContextWithLogger(c.Context, log.FromContext(c.Context).WithField("cmd", c.Command.Name))
 
 		c.Context = ctx
 

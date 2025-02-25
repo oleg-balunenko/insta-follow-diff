@@ -39,10 +39,10 @@ func main() {
 	}}
 	app.Version = printVersion(ctx)
 	app.Flags = globalFlags()
-	app.Commands = commands(ctx)
-	app.CommandNotFound = notFound(ctx)
-	app.After = onExit(ctx)
-	app.Before = printHeader(ctx)
+	app.Commands = commands()
+	app.CommandNotFound = notFound()
+	app.After = onExit()
+	app.Before = printHeader()
 
 	if err := app.RunContext(ctx, os.Args); err != nil {
 		log.WithError(ctx, err).Fatal("Failed to run")

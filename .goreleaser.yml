@@ -1,3 +1,5 @@
+version: 2
+
 release:
   github:
     owner: obalunenko
@@ -16,32 +18,31 @@ gomod:
     - CGO_ENABLED=0
   # Which Go binary to use.
   # Defaults to `go`.
+  mod: vendor
   gobinary: go
-
-before:
-  hooks:
-    - go mod verify
 
 builds:
   - id: cli
     binary: instadiff-cli
     goos:
-      - "linux"
-      - "darwin"
-      - "windows"
+      - 'linux'
+      - 'darwin'
+      - 'windows'
     goarch:
-      - "386"
-      - "amd64"
-      - "arm"
-      - "arm64"
+      - 'amd64'
+      - 'arm'
+      - 'arm64'
+    ignore:
+      - goos: darwin
+        goarch: 'arm'
+
     mod_timestamp: '{{ .CommitTimestamp }}'
     env:
       - CGO_ENABLED=0
     main: ./cmd/instadiff-cli
     flags:
       - -trimpath
-    ldflags:
-      - "{{ .Env.GO_BUILD_LDFLAGS }}"
+
 universal_binaries:
   - # ID of the source build
     #
@@ -65,11 +66,13 @@ archives:
   - id: cli
     builds:
       - cli
-    format: tar.gz
+    formats:
+      - tar.gz
     wrap_in_directory: true
     format_overrides:
       - goos: windows
-        format: zip
+        formats: 
+          - zip
     name_template: "{{ .Binary }}-{{ .Version }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
     files:
       - LICENSE
@@ -78,7 +81,7 @@ checksum:
   name_template: "{{ .ProjectName }}-{{ .Version }}-checksums.txt"
 
 snapshot:
-  name_template: SNAPSHOT-{{ .Commit }}
+  version_template: SNAPSHOT-{{ .Commit }}
 
 changelog:
   sort: asc

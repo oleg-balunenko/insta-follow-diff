@@ -6,7 +6,7 @@ VERSION ?= $(shell git describe --tags $(git rev-list --tags --max-count=1))
 APP_NAME?=instadiff-cli
 SHELL := env APP_NAME=$(APP_NAME) $(SHELL)
 
-GOVERSION:=1.22
+GOVERSION:=1.24
 
 COMPOSE_TOOLS_FILE=deployments/docker-compose/go-tools-docker-compose.yml
 COMPOSE_TOOLS_CMD_BASE=docker compose -f $(COMPOSE_TOOLS_FILE)

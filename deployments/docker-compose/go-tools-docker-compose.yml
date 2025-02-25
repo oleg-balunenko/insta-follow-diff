@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   tools:
     build:
@@ -63,7 +61,7 @@ services:
   go-generate:
     extends:
       service: tools
-    entrypoint: /bin/sh -c 'git config --global --add safe.directory /app && ./scripts/codegen/go-generate.sh'
+    entrypoint: /bin/sh -c 'git config --global --add safe.directory /app && ./scripts/codegen/generate.sh'
 
   build:
     extends:

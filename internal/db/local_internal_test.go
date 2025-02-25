@@ -55,7 +55,6 @@ func Test_localDB_GetLastUsersBatchByType(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			l := setUpLocalDBWithFixtures(t)
 
@@ -65,6 +64,7 @@ func Test_localDB_GetLastUsersBatchByType(t *testing.T) {
 
 				return
 			}
+
 			require.NoError(t, err)
 			assert.Equal(t, resetBatchTime(tt.want), resetBatchTime(got))
 		})
@@ -76,7 +76,9 @@ func Test_localDB_InsertUsersBatch(t *testing.T) {
 	bType := models.UsersBatchTypeFollowers
 
 	gotBatch, err := ldb.GetLastUsersBatchByType(context.TODO(), bType)
+
 	require.ErrorIs(t, err, ErrNoData)
+
 	assert.Equal(t, resetBatchTime(models.MakeUsersBatch(bType, nil, time.Now())), resetBatchTime(gotBatch))
 
 	goldenBatch := models.UsersBatch{
