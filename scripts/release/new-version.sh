@@ -43,8 +43,7 @@ function menu() {
   SHORTCOMMIT="$(git rev-parse --short HEAD)"
 
   PREV_VERSION="$(git tag | sort -V | tail -1)"
-  if [ -z "${PREV_VERSION}" ] || [ "${PREV_VERSION}" = "${SHORTCOMMIT}" ]
-   then
+  if [ -z "${PREV_VERSION}" ] || [ "${PREV_VERSION}" = "${SHORTCOMMIT}" ]; then
     PREV_VERSION="v0.0.0"
   fi
 
@@ -61,7 +60,7 @@ function menu() {
     ;;
   3)
     printf "Patch update.........\n"
-    NEW_VERSION=$(echo ${PREV_VERSION}  | sed 's/\(.*v\)\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)/\2;\3;\4;\1/g' | sort -t';' -k 1,1n -k 2,2n -k 3,3n | tail -n 1 | awk -F';' '{printf "%s%d.%d.%d", $4, $1,$2,($3 + 1) }')
+    NEW_VERSION=$(echo ${PREV_VERSION} | sed 's/\(.*v\)\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)/\2;\3;\4;\1/g' | sort -t';' -k 1,1n -k 2,2n -k 3,3n | tail -n 1 | awk -F';' '{printf "%s%d.%d.%d", $4, $1,$2,($3 + 1) }')
     ;;
   4)
     printf "Exit................................\n"
@@ -93,8 +92,8 @@ while true; do
   case $yn in
   [Yy]*)
 
-    git tag -a "${NEW_TAG}" -m "${NEW_TAG}" && \
-     git push --tags
+    git tag -a "${NEW_TAG}" -m "${NEW_TAG}" &&
+      git push --tags
 
     break
     ;;

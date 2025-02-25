@@ -19,6 +19,7 @@ echo "Building ${APP}..."
 
 BIN_OUT="${BIN_DIR}/${APP}"
 
+
 GO_BUILD_PACKAGE="${REPO_ROOT}/cmd/${APP}"
 
 rm -rf "${BIN_OUT}"

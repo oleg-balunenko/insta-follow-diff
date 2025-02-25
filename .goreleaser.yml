@@ -8,7 +8,7 @@ release:
     **Full Changelog**: https://github.com/obalunenko/instadiff-cli/compare/{{ .PreviousTag }}...{{ .Tag }}
 
 gomod:
-  proxy: false
+  proxy: true
   # If proxy is true, use these environment variables when running `go mod` commands (namely, `go mod tidy`).
   # Defaults to `os.Environ()`.
   env:
