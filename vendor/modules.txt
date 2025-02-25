@@ -208,16 +208,16 @@ github.com/moby/term/windows
 # github.com/montanaflynn/stats v0.7.1
 ## explicit; go 1.13
 github.com/montanaflynn/stats
-# github.com/obalunenko/getenv v1.13.0
-## explicit; go 1.22
+# github.com/obalunenko/getenv v1.14.0
+## explicit; go 1.23
 github.com/obalunenko/getenv
 github.com/obalunenko/getenv/internal
 github.com/obalunenko/getenv/option
-# github.com/obalunenko/logger v1.1.0
-## explicit; go 1.22
+# github.com/obalunenko/logger v1.2.0
+## explicit; go 1.23
 github.com/obalunenko/logger
-# github.com/obalunenko/version v1.2.0
-## explicit; go 1.22
+# github.com/obalunenko/version v1.3.1
+## explicit; go 1.24
 github.com/obalunenko/version
 # github.com/olegfedoseev/image-diff v0.0.0-20171116094004-897a4e73dfd6
 ## explicit

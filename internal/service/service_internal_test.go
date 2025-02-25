@@ -38,7 +38,6 @@ func Test_getLostFollowers(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			got := getLost(tt.args.old, tt.args.new)
 			assert.Equal(t, tt.want, got)
@@ -76,7 +75,6 @@ func Test_getNewFollowers(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			got := getNew(tt.args.old, tt.args.new)
 			assert.Equal(t, tt.want, got)

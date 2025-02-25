@@ -37,7 +37,7 @@ func printVersion(ctx context.Context) string {
 		version.GetBuildDate(),
 	)
 	if err != nil {
-		log.WithError(ctx, err).Error("print version")
+		log.WithError(ctx, err).Fatal("print version")
 	}
 
 	if err := w.Flush(); err != nil {
@@ -47,7 +47,7 @@ func printVersion(ctx context.Context) string {
 	return buf.String()
 }
 
-func printHeader(_ context.Context) cli.BeforeFunc {
+func printHeader() cli.BeforeFunc {
 	const (
 		padding  int  = 1
 		minWidth int  = 0

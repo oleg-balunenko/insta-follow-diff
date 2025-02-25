@@ -60,11 +60,11 @@ type Bar interface {
 //	for i := range 100{
 //		pBar.Progress() <- struct{}{}
 //	}.
-func New(max int, barType BType) Bar {
+func New(maxWork int, barType BType) Bar {
 	switch barType { //nolint:exhaustive // this is expected behavior.
 	case BTypeRendered:
 		b := realBar{
-			bar:   progressbar.New(max),
+			bar:   progressbar.New(maxWork),
 			stop:  sync.Once{},
 			wg:    sync.WaitGroup{},
 			bchan: make(chan struct{}, 1),
@@ -152,7 +152,9 @@ func (b *realBar) Run(ctx context.Context) {
 			log.WithError(ctx, err).Error("Failed to finish bar")
 		}
 
-		_, _ = fmt.Fprintln(os.Stdout)
+		if _, err := fmt.Fprintln(os.Stdout); err != nil {
+			log.WithError(ctx, err).Error("Failed to print new line")
+		}
 	}()
 
 	var (

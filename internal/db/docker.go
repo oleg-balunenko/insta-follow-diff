@@ -130,8 +130,10 @@ func setUpDB(ctx context.Context, m *testing.M, container containerParams, p Con
 		}
 	}
 
+	const maxWait = 180 * time.Second
+
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
-	pool.MaxWait = 180 * time.Second
+	pool.MaxWait = maxWait
 	if err = pool.Retry(retryFn(ctx)); err != nil {
 		log.WithError(ctx, err).WithFields(log.Fields{
 			"container": resource.Container.Name,

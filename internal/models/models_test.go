@@ -29,8 +29,6 @@ func TestUsersBatchType_Valid(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
-
 		t.Run(tt.name, func(t *testing.T) {
 			got := tt.i.Valid()
 			assert.Equal(t, tt.want, got)
@@ -66,8 +64,6 @@ func TestMakeUser(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		tt := tt
-
 		t.Run(tt.name, func(t *testing.T) {
 			got := models.MakeUser(tt.args.id, tt.args.username, tt.args.fullname)
 			assert.Equal(t, tt.want, got)

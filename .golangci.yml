@@ -1,19 +1,41 @@
 linters-settings:
   depguard:
-    list-type: blacklist
-    packages:
-      # logging is allowed only by logutils.Log, logrus
-      # is allowed to use only in logutils package
-      - github.com/sirupsen/logrus
-    packages-with-error-message:
-      - github.com/sirupsen/logrus: "logging is allowed only by github.com/obalunenko/logger"
+    # new configuration
+    rules:
+      logger:
+        deny:
+          - pkg: "github.com/sirupsen/logrus"
+            desc: logging is allowed only by github.com/obalunenko/logger
   dupl:
     threshold: 100
   funlen:
     lines: 100
     statements: 50
   gci:
-    local-prefixes: github.com/obalunenko/instadiff-cli
+    # Section configuration to compare against.
+    # Section names are case-insensitive and may contain parameters in ().
+    # The default order of sections is `standard > default > custom > blank > dot > alias > localmodule`,
+    # If `custom-order` is `true`, it follows the order of `sections` option.
+    # Default: ["standard", "default"]
+    sections:
+      - standard                       # Standard section: captures all standard packages.
+      - default                        # Default section: contains all imports that could not be matched to another section type.
+      - prefix(github.com/obalunenko) # Custom section: groups all imports with the specified Prefix.
+      - localmodule                    # Local module section: contains all local packages. This section is not present unless explicitly enabled.
+
+    # Skip generated files.
+    # Default: true
+    skip-generated: true
+
+    # Enable custom order of sections.
+    # If `true`, make the section order the same as the order of `sections`.
+    # Default: false
+    custom-order: true
+
+    # Drops lexical ordering for custom sections.
+    # Default: false
+    no-lex-order: true
+
   goconst:
     min-len: 2
     min-occurrences: 2
@@ -30,18 +52,132 @@ linters-settings:
       - hugeParam
       - octalLiteral
       - wrapperFunc
-      - sloppyReassign
   gocyclo:
     min-complexity: 15
   goimports:
     local-prefixes: github.com/obalunenko/instadiff-cli
-  gomnd:
-    settings:
-      mnd:
-        # don't include the "operation" and "assign"
-        checks: [ argument,case,condition,return ]
+  mnd:
+    # List of enabled checks, see https://github.com/tommy-muehle/go-mnd/#checks for description.
+    # Default: ["argument", "case", "condition", "operation", "return", "assign"]
+    checks:
+      - argument
+      - case
+      - condition
+      - operation
+      - return
+      - assign
+    # List of numbers to exclude from analysis.
+    # The numbers should be written as string.
+    # Values always ignored: "1", "1.0", "0" and "0.0"
+    # Default: []
+    ignored-numbers: []
+    # List of file patterns to exclude from analysis.
+    # Values always ignored: `.+_test.go`
+    # Default: []
+    ignored-files: []
+    # List of function patterns to exclude from analysis.
+    # Following functions are always ignored: `time.Date`,
+    # `strconv.FormatInt`, `strconv.FormatUint`, `strconv.FormatFloat`,
+    # `strconv.ParseInt`, `strconv.ParseUint`, `strconv.ParseFloat`.
+    # Default: []
+    ignored-functions: []
+
   govet:
-    check-shadowing: true
+    # Disable all analyzers.
+    # Default: false
+    disable-all: false
+    # Enable analyzers by name.
+    # (in addition to default:
+    #   appends, asmdecl, assign, atomic, bools, buildtag, cgocall, composites, copylocks, defers, directive, errorsas,
+    #   framepointer, httpresponse, ifaceassert, loopclosure, lostcancel, nilfunc, printf, shift, sigchanyzer, slog,
+    #   stdmethods, stringintconv, structtag, testinggoroutine, tests, timeformat, unmarshal, unreachable, unsafeptr,
+    #   unusedresult
+    # ).
+    # Run `GL_DEBUG=govet golangci-lint run --enable=govet` to see default, all available analyzers, and enabled analyzers.
+    # Default: []
+    disable:
+      - fieldalignment
+    enable:
+      # Check for missing values after append.
+      - appends
+      # Report mismatches between assembly files and Go declarations.
+      - asmdecl
+      # Check for useless assignments.
+      - assign
+      # Check for common mistakes using the sync/atomic package.
+      - atomic
+      # Check for non-64-bits-aligned arguments to sync/atomic functions.
+      - atomicalign
+      # Check for common mistakes involving boolean operators.
+      - bools
+      # Check //go:build and // +build directives.
+      - buildtag
+      # Detect some violations of the cgo pointer passing rules.
+      - cgocall
+      # Check for unkeyed composite literals.
+      - composites
+      # Check for locks erroneously passed by value.
+      - copylocks
+      # Check for calls of reflect.DeepEqual on error values.
+      - deepequalerrors
+      # Report common mistakes in defer statements.
+      - defers
+      # Check Go toolchain directives such as //go:debug.
+      - directive
+      # Report passing non-pointer or non-error values to errors.As.
+      - errorsas
+      # Find calls to a particular function.
+      - findcall
+      # Report assembly that clobbers the frame pointer before saving it.
+      - framepointer
+      # Check for mistakes using HTTP responses.
+      - httpresponse
+      # Detect impossible interface-to-interface type assertions.
+      - ifaceassert
+      # Check references to loop variables from within nested functions.
+      - loopclosure
+      # Check cancel func returned by context.WithCancel is called.
+      - lostcancel
+      # Check for useless comparisons between functions and nil.
+      - nilfunc
+      # Check for redundant or impossible nil comparisons.
+      - nilness
+      # Check consistency of Printf format strings and arguments.
+      - printf
+      # Check for comparing reflect.Value values with == or reflect.DeepEqual.
+      - reflectvaluecompare
+      # Check for possible unintended shadowing of variables.
+      - shadow
+      # Check for shifts that equal or exceed the width of the integer.
+      - shift
+      # Check for unbuffered channel of os.Signal.
+      - sigchanyzer
+      # Check for invalid structured logging calls.
+      - slog
+      # Check the argument type of sort.Slice.
+      - sortslice
+      # Check signature of methods of well-known interfaces.
+      - stdmethods
+      # Check for string(int) conversions.
+      - stringintconv
+      # Check that struct field tags conform to reflect.StructTag.Get.
+      - structtag
+      # Report calls to (*testing.T).Fatal from goroutines started by a test.
+      - testinggoroutine
+      # Check for common mistaken usages of tests and examples.
+      - tests
+      # Check for calls of (time.Time).Format or time.Parse with 2006-02-01.
+      - timeformat
+      # Report passing non-pointer or non-interface values to unmarshal.
+      - unmarshal
+      # Check for unreachable code.
+      - unreachable
+      # Check for invalid conversions of uintptr to unsafe.Pointer.
+      - unsafeptr
+      # Check for unused results of calls to some functions.
+      - unusedresult
+      # Checks for unused writes.
+      - unusedwrite
   lll:
     line-length: 140
   misspell:
@@ -56,13 +192,11 @@ linters:
   disable-all: true
   enable:
     - bodyclose
-    - deadcode
     - depguard
     - dogsled
     - dupl
     - errcheck
-    - exportloopref
-    - exhaustive
+    - copyloopvar
     - funlen
     - gochecknoinits
     - goconst
@@ -70,7 +204,7 @@ linters:
     - gocyclo
     - gofmt
     - goimports
-    - gomnd
+    - mnd
     - goprintffuncname
     - gosec
     - gosimple
@@ -83,13 +217,11 @@ linters:
     - nolintlint
     - rowserrcheck
     - staticcheck
-    - structcheck
     - stylecheck
     - typecheck
     - unconvert
     - unparam
     - unused
-    - varcheck
     - whitespace
     - revive
     - wsl
@@ -109,6 +241,21 @@ linters:
   # - testpackage
 
 issues:
+  # make issues output unique by line, default is true
+  uniq-by-line: true
+  # Show only new issues: if there are unstaged changes or untracked files,
+  # only those changes are analyzed, else only changes in HEAD~ are analyzed.
+  # It's a super-useful option for integration of golangci-lint into existing
+  # large codebase. It's not practical to fix all existing issues at the moment
+  # of integration: much better don't allow issues in new code.
+  # Default is false.
+  new: false
+  # Fix found issues (if it's supported by the linter)
+  fix: false
+  exclude-files:
+    - \.pb\.go$
+  exclude-dirs:
+    - vendor/
   exclude-use-default: false
   exclude:
     # for "public interface + private struct implementation" cases only!
@@ -123,83 +270,84 @@ issues:
         - funlen
         - dupl
         - gosec
-    - path: internal/input/
-      linters:
-        - gocyclo
-        - funlen
-        - godot
-        - godox
-        - dupl
-        - gofmt
-        - gci
-        - gofumpt
-        - goimports
-        - gosimple
-    - path: internal/puzzles/constants.go
-      linters:
-        - revive
-    - path: internal/puzzles/solutions/
-      linters:
-        - gochecknoinits
-
-      # Show only new issues: if there are unstaged changes or untracked files,
-      # only those changes are analyzed, else only changes in HEAD~ are analyzed.
-      # It's a super-useful option for integration of golangci-lint into existing
-      # large codebase. It's not practical to fix all existing issues at the moment
-      # of integration: much better don't allow issues in new code.
-      # Default is false.
-      new: true
-
-      # Fix found issues (if it's supported by the linter)
-      fix: false
-
-  severity:
-    # Default value is empty string.
-    # Set the default severity for issues. If severity rules are defined and the issues
-    # do not match or no severity is provided to the rule this will be the default
-    # severity applied. Severities should match the supported severity names of the
-    # selected out format.
-    # - Code climate: https://docs.codeclimate.com/docs/issues#issue-severity
-    # -   Checkstyle: https://checkstyle.sourceforge.io/property_types.html#severity
-    # -       GitHub: https://help.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-error-message
-    default-severity: error
-
-    # The default value is false.
-    # If set to true severity-rules regular expressions become case sensitive.
-    case-sensitive: false
-
-    # Default value is empty list.
-    # When a list of severity rules are provided, severity information will be added to lint
-    # issues. Severity rules have the same filtering capability as exclude rules except you
-    # are allowed to specify one matcher per severity rule.
-    # Only affects out formats that support setting severity information.
-    rules:
-      - linters:
-          - dupl
-        severity: warning
 
 run:
   issues-exit-code: 0
   tests: true
-  skip-dirs:
-    - vendor/
-  skip-files:
-    - \.pb\.go$
+
+severity:
+  # Set the default severity for issues.
+  #
+  # If severity rules are defined and the issues do not match or no severity is provided to the rule
+  # this will be the default severity applied.
+  # Severities should match the supported severity names of the selected out format.
+  # - Code climate: https://docs.codeclimate.com/docs/issues#issue-severity
+  # - Checkstyle: https://checkstyle.sourceforge.io/property_types.html#SeverityLevel
+  # - GitHub: https://help.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-error-message
+  # - TeamCity: https://www.jetbrains.com/help/teamcity/service-messages.html#Inspection+Instance
+  #
+  # `@linter` can be used as severity value to keep the severity from linters (e.g. revive, gosec, ...)
+  #
+  # Default: ""
+  default-severity: error
+
+  # If set to true `severity-rules` regular expressions become case-sensitive.
+  # Default: false
+  case-sensitive: true
+
+  # When a list of severity rules are provided, severity information will be added to lint issues.
+  # Severity rules have the same filtering capability as exclude rules
+  # except you are allowed to specify one matcher per severity rule.
+  #
+  # `@linter` can be used as severity value to keep the severity from linters (e.g. revive, gosec, ...)
+  #
+  # Only affects out formats that support setting severity information.
+  #
+  # Default: []
+  rules:
+    - linters:
+        - dupl
+      severity: info
+
 
 # output configuration options
 output:
   # colored-line-number|line-number|json|tab|checkstyle|code-climate|junit-xml|github-actions
   # default is "colored-line-number"
-  format: checkstyle
+  formats:
+    - format: colored-line-number
+      path: stderr
+    - format: checkstyle
+      path: linters-report.xml
+
+
+  # Order to use when sorting results.
+  # Require `sort-results` to `true`.
+  # Possible values: `file`, `linter`, and `severity`.
+  #
+  # If the severity values are inside the following list, they are ordered in this order:
+  #   1. error
+  #   2. warning
+  #   3. high
+  #   4. medium
+  #   5. low
+  # Either they are sorted alphabetically.
+  #
+  # Default: ["file"]
+  sort-order:
+    - linter
+    - severity
+    - file # filepath, line, and column.
+
+  # Show statistics per linter.
+  # Default: false
+  show-stats: true
 
   # print lines of code with issue, default is true
   print-issued-lines: true
 
   # print linter name in the end of issue text, default is true
   print-linter-name: true
-
-  # make issues output unique by line, default is true
-  uniq-by-line: true
 
   # add a prefix to the output file references; default is no prefix
   path-prefix: ""
